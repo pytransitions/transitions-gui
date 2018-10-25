@@ -1,0 +1,26 @@
+body { 
+    font: 14px helvetica neue, helvetica, arial, sans-serif;
+  }
+  
+#cy {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    left: 0;
+    top: 2rem;
+}
+
+#config {
+  z-index: 1;
+  position: absolute;
+  top: 0px;
+  height: 2rem;
+  width: 100%;
+}
+
+.button {
+  font-size: 20px;
+  background-color: cadetblue;
+  border: none;
+  color: white;
+}
