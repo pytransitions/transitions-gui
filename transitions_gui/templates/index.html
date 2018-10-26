@@ -1,20 +1,19 @@
 <html>
-   <head>
+    <head>
       <title>{{ title }}</title>
       <link href="/static/css/style.css" rel="stylesheet" />
       <meta charset=utf-8 />
       <!-- <meta name="viewport" content="user-scalable=no, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, minimal-ui"> -->
-      <script src="/static/js/cytoscape.js"></script>
-      <script src="/static/js/dagre.min.js"></script>
-      <script src="/static/js/cytoscape-dagre.js"></script>
-   </head>
-   <body>
-    <div>
-     <div id="cy"></div>
-    </div>
+      <script src="/static/js/main.js"></script>
+    </head>
+    <body>
+    <h1 id="machineName">{{ title }}</h1>
     <div id="config">
-        <button class="button locked" onclick="onLayoutClicked(this)">Layout: locked</button>
+        <input id="layoutButton" class="button" type="image" src="/static/img/pencil.svg" title="toggle edit mode"/>
+        <input id="saveButton" class="button" type="image" src="/static/img/save.svg" title="save layout"/>
     </div>
-     <script src="/static/js/transitions.js"></script>
-   </body>
- </html>
+     <div>
+        <div id="cy"></div>
+     </div>
+    </body>
+</html>

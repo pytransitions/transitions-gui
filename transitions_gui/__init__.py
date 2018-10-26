@@ -1,1 +1,1 @@
-from .core import WebMachine, WebTransition
+from .web import WebMachine, WebTransition

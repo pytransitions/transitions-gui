@@ -1,11 +1,16 @@
-import tornado.web
 import tornado.websocket
 import json
 
+
 class MainHandler(tornado.web.RequestHandler):
+
+    def initialize(self, machine):
+        self.machine = machine
+
     def get(self):
-        items = ["Item 1", "Item 2", "Item 3"]
-        self.render("index.html", title="My title", items=items)
+        title = self.machine.name[:-2] if self.machine.name else "State Machine"
+        self.render("index.html", title=title)
+
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
     sockets = set()

@@ -1,6 +1,5 @@
 import threading
 import time
-import signal
 
 import tornado.ioloop
 import tornado.web
@@ -22,12 +21,13 @@ class WebTransition(Transition):
         for ws in WebSocketHandler.sockets:
             ws.write_message({"method": "state_changed", "arg": {"model": model_name, "transition": transition}})
 
+
 class WebMachine(MarkupMachine):
 
     transition_cls = WebTransition
 
     def __init__(self, *args, **kwargs):
-        handlers = [("/", MainHandler),
+        handlers = [("/", MainHandler, {'machine': self}),
                     ("/ws", WebSocketHandler, {'machine': self})]
         self._application = tornado.web.Application(handlers, **settings)
 
@@ -55,17 +55,3 @@ class WebMachine(MarkupMachine):
             self._iloop.add_callback(self._iloop.stop)
             self._thread.join()
             self._thread = None
-
-if __name__ == "__main__":
-    states = ['A', 'B', 'C']
-    transitions = [['go', 'A', 'B'], ['go', 'B', 'C'], ['go', 'C', 'A']]
-    m = WebMachine(states=states, transitions=transitions, initial='A', port=8080)
-
-    print('init done')
-    try:
-        while True:
-            time.sleep(5)
-    except KeyboardInterrupt:
-        m.stop_server()
-
-

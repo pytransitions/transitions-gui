@@ -10,17 +10,27 @@ body {
     top: 2rem;
 }
 
+#machineName {
+    width: 100%;
+    text-align: center;
+}
+
 #config {
   z-index: 1;
   position: absolute;
   top: 0px;
-  height: 2rem;
+  height: 4rem;
   width: 100%;
 }
 
 .button {
+  margin: 10 5 10 5;
+  float: left;
   font-size: 20px;
-  background-color: cadetblue;
-  border: none;
-  color: white;
+  height: 3rem;
+  width: 3rem;
+}
+
+.unlocked {
+  background-color: lightsalmon;
 }
