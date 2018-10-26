@@ -1,1 +1,2 @@
-tornado
+tornado>=5.0
+transitions>=0.7
