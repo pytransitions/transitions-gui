@@ -1,0 +1,25 @@
+include *.md
+include *.txt
+include .coveragerc
+include LICENSE
+include MANIFEST
+include tox.ini
+
+include frontend/.eslintrc.yml
+include frontend/package.json
+include frontend/package-lock.json
+include frontend/webpack.config.js
+include frontend/README.md
+
+include transitions_gui/static/js/main.js
+include transitions_gui/static/js/main.js.map
+
+recursive-include doc/img *.png
+recursive-include examples *.py
+recursive-include frontend/src *.js
+recursive-include tests *.py
+recursive-include transitions_gui/static/css *.css
+recursive-include transitions_gui/static/img *.svg
+recursive-include transitions_gui/templates *.html
+
+recursive-exclude frontend/node_modules *
