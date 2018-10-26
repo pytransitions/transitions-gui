@@ -1,0 +1,57 @@
+import WebMachine from './modules/machine'
+
+class App {
+  constructor () {
+    this.ws = new WebSocket(`ws://${document.location.host}/ws`)
+    this.ws.onopen = function () { console.log('Open Websocket') }
+    this.ws.onclose = function () { console.log('Websocket Closed') }
+    this.ws.onmessage = evt => this.onMessageReceived(evt)
+    document.getElementById('layoutButton').addEventListener('click', evt => this.onLayoutClicked(evt))
+    document.getElementById('saveButton').addEventListener('click', evt => this.webMachine.saveLayout())
+  }
+
+  onMessageReceived (evt) {
+    try {
+      let msg = JSON.parse(evt.data)
+      switch (msg.method) {
+        case 'update_machine':
+          this.webMachine = new WebMachine(msg.arg, getURLParameter('layout'))
+          this.webMachine.cy.on('tap', 'edge', function (evt) {
+            if (this.webMachine.cy.autolock()) {
+              this.ws.send(JSON.stringify({
+                'method': 'trigger',
+                'arg': evt.target.data('trigger')
+              }))
+            }
+          })
+          this.webMachine.selectState(msg.arg.model[0].state)
+          break
+        case 'state_changed':
+          if (this.webMachine !== undefined) {
+            this.webMachine.selectTransition(msg.arg.transition)
+          }
+          break
+      }
+    } catch (err) {
+      console.log('ERROR: ', err)
+    }
+  }
+
+  onLayoutClicked (evt) {
+    console.log(this)
+    let elem = evt.target
+    elem.classList.toggle('unlocked')
+    this.webMachine.cy.autolock(!elem.classList.contains('unlocked'))
+  }
+}
+
+// http://stackoverflow.com/a/11582513/1617563
+function getURLParameter (name) {
+  return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null
+}
+
+function init () {
+  window.app = new App()
+}
+
+window.onload = init
