@@ -4,6 +4,10 @@ An extension for the [transitions](https://github.com/pytransitions/transitions)
 `transitions-gui` uses [tornado](https://www.tornadoweb.org) as a web server and [cytoscape](http://js.cytoscape.org) for graph drawing and manipulation. For information about the javascript workflow head to [frontend](./frontend).
 The server (including the state machine) and client (your web browser) communicate via [WebSockets](https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API).
 
+***
+**Pre-release feedback wanted**: Things do not work out of the box? You are not a big fan of the chosen icons, colours, layouts or styles? Now is the time to speak up and file a [new issue](https://github.com/aleneum/transitions-gui/issues/new).
+***
+
 ## Preparation
 
 This project is in a very early stage and requires yet unreleased transitions features (`transitions.MarkupMachine`).
