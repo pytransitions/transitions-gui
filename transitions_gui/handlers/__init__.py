@@ -26,7 +26,8 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
     def on_message(self, message):
         message = json.loads(message)
         if message['method'] == 'trigger':
-            self.machine.trigger(message['arg'])
+            for model in self.machine.models:
+                model.trigger(message['arg'])
 
     def on_close(self):
         self.sockets.remove(self)

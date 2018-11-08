@@ -62,7 +62,7 @@ export default class WebMachine {
 
   selectTransition (transition) {
     // console.log(transition)
-    let edge = this.cy.edges(`#${transition.source} -> #${transition.dest}`)
+    let edge = this.cy.edges(`[id="${transition.source}"] -> [id="${transition.dest}"]`)
     // console.log(edge.length)
     if (edge.length > 1 && transition.trigger) {
       edge = edge.filter(`[label = "${transition.trigger}"]`)

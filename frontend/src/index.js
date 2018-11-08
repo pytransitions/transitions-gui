@@ -15,10 +15,11 @@ class App {
       let msg = JSON.parse(evt.data)
       switch (msg.method) {
         case 'update_machine':
+          let _this = this
           this.webMachine = new WebMachine(msg.arg, getURLParameter('layout'))
           this.webMachine.cy.on('tap', 'edge', function (evt) {
-            if (this.webMachine.cy.autolock()) {
-              this.ws.send(JSON.stringify({
+            if (_this.webMachine.cy.autolock()) {
+              _this.ws.send(JSON.stringify({
                 'method': 'trigger',
                 'arg': evt.target.data('trigger')
               }))
