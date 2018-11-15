@@ -9,8 +9,8 @@ class WebTransition(Transition):
         transition = {"source": self.source,
                       "dest": self.dest,
                       "trigger": event_data.event.name}
-        self._handler.send_message({"method": "state_changed",
-                                    "arg": {"model": model_name, "transition": transition}})
+        event_data.machine.websocket_handler.send_message({"method": "state_changed",
+                                                           "arg": {"model": model_name, "transition": transition}})
 
     def process_message(self, message):
         if message['method'] == 'trigger':
@@ -22,8 +22,9 @@ class WebMachine(MarkupMachine):
     transition_cls = WebTransition
 
     def __init__(self, *args, **kwargs):
-        self._handler = kwargs.pop('websocket_handler', None)
-        if not self._handler:
+        self.websocket_handler = kwargs.pop('websocket_handler', None)
+        self._thread = None
+        if not self.websocket_handler:
             import threading
             import tornado.web
             from .handlers import MainHandler, WebSocketHandler
@@ -35,7 +36,7 @@ class WebMachine(MarkupMachine):
             self._thread = threading.Thread(target=self.start_server)
             self._thread.daemon = kwargs.pop('daemon', False)
             self._thread.start()
-            self._hander = WebSocketHandler
+            self.websocket_handler = WebSocketHandler
         super(WebMachine, self).__init__(*args, **kwargs)
 
     def start_server(self):

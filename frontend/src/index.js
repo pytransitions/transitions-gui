@@ -25,7 +25,7 @@ class App {
               }))
             }
           })
-          this.webMachine.selectState(msg.arg.model[0].state)
+          this.webMachine.selectState(msg.arg.models[0].state)
           break
         case 'state_changed':
           if (this.webMachine !== undefined) {
