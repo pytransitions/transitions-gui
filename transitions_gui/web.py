@@ -74,7 +74,8 @@ def _init_default_handler(machine, port=8080, daemon=False):
     _LOGGER.info('Initializing tornado web applicatiob')
     machine._application = tornado.web.Application(handlers, **settings)
     machine._port = port
-    server_thread = threading.Thread(target=machine.start_server, daemon=daemon)
+    server_thread = threading.Thread(target=machine.start_server)
+    server_thread.daemon = daemon
     machine._thread = server_thread
     _LOGGER.info('Starting server thread with daemon=%r listening on port %d', daemon, port)
     server_thread.start()
