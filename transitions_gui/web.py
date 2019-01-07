@@ -18,11 +18,6 @@ class WebTransition(Transition):
         event_data.machine.websocket_handler.send_message({"method": "state_changed",
                                                            "arg": {"model": model_name, "transition": transition}})
 
-    def process_message(self, message):
-        if message['method'] == 'trigger':
-            for model in self.machine.models:
-                model.trigger(message['arg'])
-
 
 class WebMachine(MarkupMachine):
 
@@ -34,6 +29,11 @@ class WebMachine(MarkupMachine):
                                                                   kwargs.pop('daemon', False)))
         super(WebMachine, self).__init__(*args, **kwargs)
 
+    def process_message(self, message):
+        if message['method'] == 'trigger':
+            for model in self.models:
+                model.trigger(message['arg'])
+
     def start_server(self):
         import tornado.ioloop
         try:
@@ -44,7 +44,7 @@ class WebMachine(MarkupMachine):
             self._iloop = tornado.ioloop.IOLoop.current()
         except ImportError:
             _LOGGER.warn("Could not initialize event loop correctly.")
-        self._application.listen(self._port)
+        self._http_server = self._application.listen(self._port)
         self._iloop.start()
         _LOGGER.info("Loop stopped")
         self._iloop.close()
@@ -54,6 +54,7 @@ class WebMachine(MarkupMachine):
         if self._thread:
             self._iloop.add_callback(self._iloop.stop)
             self._thread.join()
+            self._http_server.stop()
             self._thread = None
 
 
@@ -71,7 +72,7 @@ def _init_default_handler(machine, port=8080, daemon=False):
     except RuntimeError:
         import asyncio
         asyncio.set_event_loop(asyncio.new_event_loop())
-    _LOGGER.info('Initializing tornado web applicatiob')
+    _LOGGER.info('Initializing tornado web application')
     machine._application = tornado.web.Application(handlers, **settings)
     machine._port = port
     server_thread = threading.Thread(target=machine.start_server)

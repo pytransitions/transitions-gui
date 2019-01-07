@@ -9,10 +9,12 @@ _SIMPLE_ARGS = dict(states=['A', 'B', 'C'], initial='A', name='Simple Machine',
 
 class TestWebMachine(TestCase):
 
+    def tearDown(self):
+        self.machine.stop_server()
+
     def test_server(self):
-        machine = WebMachine(**_SIMPLE_ARGS)
+        self.machine = WebMachine(**_SIMPLE_ARGS)
         time.sleep(1)
-        machine.stop_server()
 
     def test_threaded_server(self):
 
@@ -24,4 +26,11 @@ class TestWebMachine(TestCase):
         mf = MachineFactory()
         mf.start()
         time.sleep(1)
-        mf.machine.stop_server()
+        self.machine = mf.machine
+
+    def test_trigger_event(self):
+        self.machine = WebMachine(**_SIMPLE_ARGS)
+        time.sleep(1)
+        self.assertEqual('A', self.machine.state)
+        self.machine.process_message(dict(method='trigger', arg='next_state'))
+        self.assertEqual('B', self.machine.state)
