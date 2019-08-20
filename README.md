@@ -51,13 +51,12 @@ except KeyboardInterrupt:  # Ctrl + C will shutdown the machine
 ```
 
 This will create a simple transitions state machine 'ordered' (as in circular) transitions. The name of the machine will be *Simple Machine* and it will act as its own model which is the default behaviour. The initial state is state *A* and every 5 seconds, the state will be changed. Next, open your favourite yet up-to-date web browser and head to [localhost:8080](http://localhost:8080). You should see something similar to this:
-
-![initial view](doc/img/initial-view.png)
+![initial view](https://raw.githubusercontent.com/aleneum/transitions-gui/0.0.5/doc/img/initial-view.png)
 
 The GUI is rather simplistic and contains only two buttons which you can see on the top left:
 
-* <img src="transitions_gui/static/img/pencil.svg" height="30px" />  - toggles between *Event Mode* and *Edit Mode*
-* <img src="transitions_gui/static/img/save.svg" height="30px" /> - saves the current layout
+* ![pencil](https://raw.githubusercontent.com/aleneum/transitions-gui/0.0.5/doc/img/pencil.png) - toggles between *Event Mode* and *Edit Mode*
+* ![save](https://raw.githubusercontent.com/aleneum/transitions-gui/0.0.5/doc/img/save.png) - saves the current layout
 
 ### Event Mode
 
@@ -67,7 +66,7 @@ The GUI always starts in *Event Mode* which is represented by the pencil's *whit
 
 Now let's rearrange some state nodes, shall we? Click the pencil symbol to switch to *Edit Mode* (the pencil's background changes its background) and start dragging that nodes like this:
 
-![](doc/img/edit-view.png)
+![](https://raw.githubusercontent.com/aleneum/transitions-gui/0.0.5/doc/img/edit-view.png)
 
 In *Edit Mode* clicking edges will not trigger an event. However, the machine's model state will be updated regardlessly.
 When you are done, switch back to *Event Mode*. Or don't. The mode does not matter for the next step. We will save that layout for the next time we want to run our state machine. Clicking the save button (<img src="transitions_gui/static/img/save.svg" height="18" />) will store the nodes' current positions in the browser's local storage. Layouts are stored by their name. If you plan to use `transitions-gui` with multiple state machines, it is recommended to make them distinguishable by name. Now reload your browser tab. Your node arangement should be recreated.
@@ -85,7 +84,7 @@ When a transition state machine configuration is sent to the browser, the browse
   
 `transitions-gui` might not choose the right layout for your graph right away. By passing different layout values, you can check which arrangement suits your needs the best. Additionally, you can 'reset' the layout if you want your graph to be automatically arranged again. When `layout=<value>` is passed, the manually stored arrangement is ignored. Check the simple machine with an improved version of the CoSE arangement by opening the GUI with [localhost:8080?layout=bilkent](http://localhost:8080?layout=bilkent). This should look like this:
 
-![bilkent](doc/img/load-layout.png)
+![bilkent](https://raw.githubusercontent.com/aleneum/transitions-gui/0.0.5/doc/img/load-layout.png)
 
 The currently supported layout values are:
 
