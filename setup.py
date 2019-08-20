@@ -5,7 +5,7 @@ with open('transitions_gui/version.py') as f:
     exec(f.read())
 
 with codecs.open('README.md', 'r', 'utf-8') as f:
-    long_description = ''.join(f.readlines()[0:])
+    long_description = ''.join(f.readlines()[3:])
     long_description = long_description.replace(
         'doc/img', 'https://raw.githubusercontent.com/aleneum/transitions-gui/%s/doc/img' % __version__)
 
@@ -38,3 +38,5 @@ setup(
         'Programming Language :: Python :: 3.7',
     ]
 )
+
+print(long_description)

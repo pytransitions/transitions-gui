@@ -1,4 +1,6 @@
+
 # transitions-gui - A frontend for [transitions](https://github.com/pytransitions/transitions) state machines 
+[![Build Status](https://travis-ci.org/pytransitions/transitions-gui.svg?branch=master)](https://travis-ci.org/pytransitions/transitions-gui)
 
 An extension for the [transitions](https://github.com/pytransitions/transitions) state machine package.
 `transitions-gui` uses [tornado](https://www.tornadoweb.org) as a web server and [cytoscape](http://js.cytoscape.org) for graph drawing and manipulation. For information about the javascript workflow head to [frontend](./frontend).
