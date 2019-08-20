@@ -6,6 +6,8 @@ with open('transitions_gui/version.py') as f:
 
 with codecs.open('README.md', 'r', 'utf-8') as f:
     long_description = ''.join(f.readlines()[0:])
+    long_description = long_description.replace(
+        'doc/img', 'https://raw.githubusercontent.com/aleneum/transitions-gui/%s/doc/img' % __version__)
 
 setup(
     name="transitions-gui",
