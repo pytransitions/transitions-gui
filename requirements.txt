@@ -1,2 +1,2 @@
 tornado>=5.0
-git+git://github.com/pytransitions/transitions@next-release
+transitions>=0.7.0

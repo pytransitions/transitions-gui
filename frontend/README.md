@@ -19,7 +19,7 @@ To do so, execute *ONE* of the following statements:
 
 ```bash
 npm run dev  # produces a (rather large) development version for debugging
-npm rum prod # produces a minified production version
+npm run prod # produces a minified production version
 npm run serve # produces a development version and runs the `<source>/examples/simple.py` for testing 
 ```
 
