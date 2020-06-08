@@ -75,7 +75,8 @@ export default function initGraph (nodes, edges, layout) {
           'target-arrow-color': 'black',
           'text-background-opacity': 1,
           'text-background-color': '#fff',
-          'text-background-padding': 5
+          'text-background-padding': 5,
+          'text-rotation': 'autorotate'
         }
       },
       {
@@ -83,7 +84,7 @@ export default function initGraph (nodes, edges, layout) {
         style: {
           'loop-sweep': '60deg',
           'loop-direction': '0deg',
-          'text-margin-y': '-1em'
+          'control-point-step-size': '50px'
         }
       },
       {
@@ -108,7 +109,7 @@ export default function initGraph (nodes, edges, layout) {
         }
       },
       {
-        selector: '.multiline',
+        selector: 'node.multiline',
         style: {
           'text-justification': 'left',
           'text-wrap': 'wrap'
@@ -119,6 +120,13 @@ export default function initGraph (nodes, edges, layout) {
     elements: {
       nodes: nodes,
       edges: edges
+    }
+  })
+
+  cy.edges(':loop').forEach(edge => {
+    const node = edge.source()
+    if (node.hasClass('multiline')) {
+      edge.css('control-point-step-size', 50 + 5 * node.css('label').split('\n').length)
     }
   })
 

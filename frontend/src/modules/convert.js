@@ -32,8 +32,13 @@ function state2Node (state, parent, details) {
   }
 
   if (details) {
+    node.classes = node.classes || []
+
+    if (state.tags) {
+      node.data.label += ' [' + state.tags.join(', ') + ']'
+    }
+
     if (state.hasOwnProperty('on_enter')) {
-      node.classes = node.classes || []
       node.classes.push('multiline')
       node.data.label += '\n- enter:'
       state.on_enter.forEach(cb => {
@@ -42,12 +47,15 @@ function state2Node (state, parent, details) {
     }
 
     if (state.hasOwnProperty('on_exit')) {
-      node.classes = node.classes || []
       node.classes.push('multiline')
       node.data.label += '\n- exit:'
       state.on_exit.forEach(cb => {
         node.data.label += `\n  + ${cb}`
       })
+    }
+
+    if (state.timeout) {
+      node.data.label += `\n- timeout(${state.timeout}s) → (${state.on_timeout.join(', ')})`
     }
   }
 
@@ -65,7 +73,8 @@ function initial2Edges (state, prefix) {
       data: {
         source: `init_${fullName}`,
         target: `${fullName}_${state.initial}`,
-        label: 'initial' }
+        label: 'initial'
+      }
     })
   }
 
@@ -85,15 +94,12 @@ function transitions2Edges (transition, details) {
 
   if (details && (transition.conditions || transition.unless)) {
     label += ' ['
-    const cons = transition.conditions || []
+    let arr = transition.conditions || []
     const unless = transition.unless || []
-    cons.forEach(co => {
-      label += co + ' & '
-    })
     unless.forEach(co => {
-      label += '!' + co + ' & '
+      arr.push('!' + co)
     })
-    label = label.slice(0, -3) // slice last ' & '
+    label += arr.join(' & ')
     label += ']'
   }
 
