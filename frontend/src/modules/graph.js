@@ -7,7 +7,7 @@ cybilken(cytoscape)
 
 export default function initGraph (nodes, edges, layout) {
   // console.log(layout)
-  let cy = cytoscape({
+  const cy = cytoscape({
     container: document.getElementById('cy'),
     boxSelectionEnabled: false,
     autounselectify: true,
@@ -43,7 +43,6 @@ export default function initGraph (nodes, edges, layout) {
       {
         selector: 'node[parallel]',
         style: {
-          // 'border-opacity': 0,
           'background-opacity': 0,
           'background-image': renderParallel
         }
@@ -51,7 +50,6 @@ export default function initGraph (nodes, edges, layout) {
       {
         selector: 'node[parallel] > node',
         style: {
-          // 'border-opacity': 0,
           'background-opacity': 0
         }
       },
@@ -94,7 +92,7 @@ export default function initGraph (nodes, edges, layout) {
           'border-opacity': 1,
           'target-arrow-color': 'red',
           'source-arrow-color': 'red',
-          'border-color' : 'red'
+          'border-color': 'red'
         }
       },
       {
@@ -138,23 +136,33 @@ export default function initGraph (nodes, edges, layout) {
 }
 
 function renderParallel (ele) {
-  var width = ele._private.autoWidth
+  if (!ele) {
+    return ele
+  }
+
+  const width = ele._private.autoWidth
   if (width === undefined) {
     return ele
   }
-  var height = ele._private.autoHeight + 20
-  var pos = ele._private.position
-  // var left = pos.x - width / 2
-  var top = pos.y - height / 2
+
+  const height = ele._private.autoHeight + 20
+  const pos = ele._private.position
+  const left = pos.x - width / 2
+  const top = pos.y - height / 2
   if (ele._private.children.length > 1) {
-    // var cPosX = ele._private.children.map(c => c._private.position.x).sort(function (a, b) { return a - b })
-    var cPosY = ele._private.children.map(c => c._private.position.y).sort(function (a, b) { return a - b })
-    var lines = ''
-    for (let i = 1; i < cPosY.length; ++i) {
-      // let x = (Math.abs(cPosX[i - 1] + cPosX[i] - 2 * left)) / 2
-      const y = (Math.abs(cPosY[i - 1] + cPosY[i] - 2 * top)) / 2
-      // lines += `<line x1="${x}" y1="0" x2="${x}" y2="${height}" stroke="black" stroke-dasharray="4, 4" />\n`
-      lines += `<line x1="0" y1="${y}" x2="${width}" y2="${y}" stroke="black" stroke-dasharray="4, 4" />\n`
+    let lines = ''
+    if (height > width) {
+      const cPosX = ele._private.children.map(c => c._private.position.x).sort(function (a, b) { return a - b })
+      for (let i = 1; i < cPosX.length; ++i) {
+        const x = (Math.abs(cPosX[i - 1] + cPosX[i] - 2 * left)) / 2
+        lines += `<line x1="${x}" y1="0" x2="${x}" y2="${height}" stroke="black" stroke-dasharray="4, 4" />\n`
+      }
+    } else {
+      var cPosY = ele._private.children.map(c => c._private.position.y).sort(function (a, b) { return a - b })
+      for (let i = 1; i < cPosY.length; ++i) {
+        const y = (Math.abs(cPosY[i - 1] + cPosY[i] - 2 * top)) / 2
+        lines += `<line x1="0" y1="${y}" x2="${width}" y2="${y}" stroke="black" stroke-dasharray="4, 4" />\n`
+      }
     }
     var svg = `<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg>
         <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" stroke-width="2">

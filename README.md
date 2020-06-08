@@ -118,6 +118,10 @@ HSM is a slightly tweaked version of the `transitions` example ...
 
 ![](doc/img/parallel.png)
 
+By the way, the orientation of the dashed line will change when the parallel state's height is larger than its width.  
+This is an experimental solution and might change in the future.
+
+
 ## I have a [bug report/issue/question]...
 
 For bug reports and other issues, please open an issue on GitHub.
