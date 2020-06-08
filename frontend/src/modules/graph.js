@@ -14,24 +14,25 @@ export default function initGraph (nodes, edges, layout) {
     style: [
       {
         selector: 'node',
-        css: {
-          'content': 'data(id)',
+        style: {
+          'label': 'data(label)',
           'text-valign': 'center',
           'text-halign': 'center',
-          'border-width' : '2',
-          'border-color' : 'black',
+          'border-width': '2',
+          'border-color': 'black',
           'background-color': '#fff',
           'shape': 'roundrectangle',
           'padding-top': '5px',
           'padding-left': '10px',
           'padding-bottom': '5px',
           'padding-right': '10px',
-          'width': 'label'
+          'width': 'label',
+          'height': 'label'
         }
       },
       {
         selector: '$node > node',
-        css: {
+        style: {
           'padding-top': '10px',
           'padding-left': '10px',
           'padding-bottom': '10px',
@@ -41,7 +42,7 @@ export default function initGraph (nodes, edges, layout) {
       },
       {
         selector: 'node[parallel]',
-        css: {
+        style: {
           // 'border-opacity': 0,
           'background-opacity': 0,
           'background-image': renderParallel
@@ -49,14 +50,14 @@ export default function initGraph (nodes, edges, layout) {
       },
       {
         selector: 'node[parallel] > node',
-        css: {
+        style: {
           // 'border-opacity': 0,
           'background-opacity': 0
         }
       },
       {
         selector: 'node[id ^="init_"]',
-        css: {
+        style: {
           'width': '5px',
           'height': '5px',
           'background-color': 'black',
@@ -78,32 +79,39 @@ export default function initGraph (nodes, edges, layout) {
         }
       },
       {
-        selector: 'edge:loop.compoundLoop',
-        css: {
-          'curve-style': 'unbundled-bezier',
-          'control-point-distances': 180,
-          'loop-sweep': 45
+        selector: 'edge:loop',
+        style: {
+          'loop-sweep': '60deg',
+          'loop-direction': '0deg',
+          'text-margin-y': '-1em'
         }
       },
       {
         selector: ':active',
-        css: {
+        style: {
           'line-color': 'red',
           'border-opacity': 1,
           'target-arrow-color': 'red',
           'source-arrow-color': 'red',
-          'border-color' : 'red',
+          'border-color' : 'red'
         }
       },
       {
         selector: '.current',
-        css: {
+        style: {
           'background-color': '#faa',
           'border-style': 'double',
           'border-color': '#f00',
           'line-color': '#faa',
           'target-arrow-color': '#faa',
-          'source-arrow-color': '#faa',
+          'source-arrow-color': '#faa'
+        }
+      },
+      {
+        selector: '.multiline',
+        style: {
+          'text-justification': 'left',
+          'text-wrap': 'wrap'
         }
       }
     ],
@@ -111,7 +119,7 @@ export default function initGraph (nodes, edges, layout) {
     elements: {
       nodes: nodes,
       edges: edges
-    },
+    }
   })
 
   layout.stop = function () {

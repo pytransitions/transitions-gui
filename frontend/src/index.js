@@ -12,16 +12,16 @@ class App {
 
   onMessageReceived (evt) {
     try {
-      let msg = JSON.parse(evt.data)
+      const msg = JSON.parse(evt.data)
+      const _this = this
       switch (msg.method) {
         case 'update_machine':
-          let _this = this
-          this.webMachine = new WebMachine(msg.arg, getURLParameter('layout'))
+          this.webMachine = new WebMachine(msg.arg, getURLParameter('layout'), getURLParameter('details'))
           this.webMachine.cy.on('tap', 'edge', function (evt) {
             if (_this.webMachine.cy.autolock()) {
               _this.ws.send(JSON.stringify({
-                'method': 'trigger',
-                'arg': evt.target.data('trigger')
+                method: 'trigger',
+                arg: evt.target.data('trigger')
               }))
             }
           })

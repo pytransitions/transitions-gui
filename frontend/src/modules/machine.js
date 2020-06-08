@@ -3,8 +3,8 @@ import initGraph from './graph'
 import config from './config'
 
 export default class WebMachine {
-  constructor (transitionsMarkup, layout) {
-    let machine = convert(transitionsMarkup)
+  constructor (transitionsMarkup, layout, details) {
+    let machine = convert(transitionsMarkup, details || false)
     this.machineName = machine.name
     layout = config.layouts[layout]
     if (layout === undefined) {
@@ -51,10 +51,6 @@ export default class WebMachine {
     localStorage.setItem(config.machineStorageLocation, JSON.stringify(machineStorage))
   }
 
-  resetStyle () {
-    this.cy.$('.current').classes()
-  }
-
   selectState (state) {
     let node = this.cy.getElementById(state)
     node.addClass('current')
@@ -62,14 +58,15 @@ export default class WebMachine {
 
   selectTransition (transition) {
     // console.log(transition)
-    let edge = this.cy.edges(`[id="${transition.source}"] -> [id="${transition.dest}"]`)
-    // console.log(edge.length)
-    if (edge.length > 1 && transition.trigger) {
-      edge = edge.filter(`[label = "${transition.trigger}"]`)
+    const source = this.cy.$('.current')
+    let edge = source.connectedEdges(`[trigger="${transition.trigger}"]`)
+    if (edge.length > 1) {
+      edge = edge.filter(`[source="${transition.source}"]`)
     }
+    // console.log(edge.length)
     if (edge.length > 0) {
       edge = edge[0]
-      this.resetStyle()
+      source.removeClass('current')
       edge.target().addClass('current')
       edge.addClass('current')
     }
