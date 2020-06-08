@@ -1,1 +1,1 @@
-from .web import WebMachine, WebTransition
+from .web import WebMachine, NestedWebMachine

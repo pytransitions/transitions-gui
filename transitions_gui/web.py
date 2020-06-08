@@ -1,7 +1,8 @@
-from transitions.extensions.markup import MarkupMachine
-from transitions.core import Transition
-
 import logging
+
+from transitions.extensions.markup import MarkupMachine
+from transitions.extensions.nesting import HierarchicalMachine, NestedTransition
+from transitions.core import Transition
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
@@ -16,7 +17,8 @@ class WebTransition(Transition):
                       "dest": self.dest,
                       "trigger": event_data.event.name}
         event_data.machine.websocket_handler.send_message({"method": "state_changed",
-                                                           "arg": {"model": model_name, "transition": transition}})
+                                                           "arg": {"model": model_name, "transition": transition,
+                                                                   "state": event_data.model.state}})
 
 
 class WebMachine(MarkupMachine):
@@ -81,3 +83,11 @@ def _init_default_handler(machine, port=8080, daemon=False):
     _LOGGER.info('Starting server thread with daemon=%r listening on port %d', daemon, port)
     server_thread.start()
     return WebSocketHandler
+
+
+class NestedWebTransition(WebTransition, NestedTransition):
+    pass
+
+
+class NestedWebMachine(WebMachine, HierarchicalMachine):
+    transition_cls = NestedWebTransition

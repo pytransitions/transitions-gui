@@ -29,7 +29,9 @@ class App {
           break
         case 'state_changed':
           if (this.webMachine !== undefined) {
+            this.webMachine.cy.$('.current').removeClass('current')
             this.webMachine.selectTransition(msg.arg.transition)
+            this.webMachine.selectState(msg.arg.state)
           }
           break
       }

@@ -105,6 +105,19 @@ You might remember that graph from transitions' documentation.
 
 ![](doc/img/example-graph.png)
 
+### NestedWebMachine
+
+In case you want to use hierarchical machines, you need to use `NestedWebMachine` instead of `WebMachine`.
+See for instance `examples/hsm.py` or `examples/parallel.py`.
+
+HSM is a slightly tweaked version of the `transitions` example ...
+
+![](doc/img/hsm.png)
+
+... and `parallel.py` -- as the name suggests -- makes use of parallel states:
+
+![](doc/img/parallel.png)
+
 ## I have a [bug report/issue/question]...
 
 For bug reports and other issues, please open an issue on GitHub.

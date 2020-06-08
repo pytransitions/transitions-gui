@@ -37,8 +37,8 @@ export default function initGraph (nodes, edges, layout) {
           'padding-left': '10px',
           'padding-bottom': '10px',
           'padding-right': '10px',
-          'text-valign': 'top',
-        },
+          'text-valign': 'top'
+        }
       },
       {
         selector: 'node[parallel]',
@@ -138,23 +138,23 @@ export default function initGraph (nodes, edges, layout) {
 }
 
 function renderParallel (ele) {
-  // var label     = ele.data('label')
-  // var icon      = ele.data('icon')
-  // var iconColor = ele.data('iconColor')
   var width = ele._private.autoWidth
   if (width === undefined) {
     return ele
   }
   var height = ele._private.autoHeight + 20
   var pos = ele._private.position
-  var left = pos.x - width / 2
+  // var left = pos.x - width / 2
+  var top = pos.y - height / 2
   if (ele._private.children.length > 1) {
-    var cPosX = ele._private.children.map(c => c._private.position.x).sort(function (a, b) {return a - b})
-    // console.log(cPosX)
+    // var cPosX = ele._private.children.map(c => c._private.position.x).sort(function (a, b) { return a - b })
+    var cPosY = ele._private.children.map(c => c._private.position.y).sort(function (a, b) { return a - b })
     var lines = ''
-    for (let i = 1; i < cPosX.length; ++i) {
-      let x = (Math.abs(cPosX[i - 1] + cPosX[i] - 2 * left)) / 2
-      lines += `<line x1="${x}" y1="0" x2="${x}" y2="${height}" stroke="black" stroke-dasharray="4, 4" />\n`
+    for (let i = 1; i < cPosY.length; ++i) {
+      // let x = (Math.abs(cPosX[i - 1] + cPosX[i] - 2 * left)) / 2
+      const y = (Math.abs(cPosY[i - 1] + cPosY[i] - 2 * top)) / 2
+      // lines += `<line x1="${x}" y1="0" x2="${x}" y2="${height}" stroke="black" stroke-dasharray="4, 4" />\n`
+      lines += `<line x1="0" y1="${y}" x2="${width}" y2="${y}" stroke="black" stroke-dasharray="4, 4" />\n`
     }
     var svg = `<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg>
         <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" stroke-width="2">

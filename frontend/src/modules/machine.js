@@ -52,13 +52,15 @@ export default class WebMachine {
   }
 
   selectState (state) {
-    let node = this.cy.getElementById(state)
-    node.addClass('current')
+    const states = (Array.isArray(state)) ? state : [state]
+    states.forEach(stateName => {
+      this.cy.getElementById(stateName).addClass('current')
+    })
   }
 
   selectTransition (transition) {
     // console.log(transition)
-    const source = this.cy.$('.current')
+    const source = this.cy.nodes(`[id="${transition.source}"]`)
     let edge = source.connectedEdges(`[trigger="${transition.trigger}"]`)
     if (edge.length > 1) {
       edge = edge.filter(`[source="${transition.source}"]`)
@@ -66,8 +68,6 @@ export default class WebMachine {
     // console.log(edge.length)
     if (edge.length > 0) {
       edge = edge[0]
-      source.removeClass('current')
-      edge.target().addClass('current')
       edge.addClass('current')
     }
   }
