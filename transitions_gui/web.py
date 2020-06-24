@@ -16,9 +16,10 @@ class WebTransition(Transition):
         transition = {"source": self.source,
                       "dest": self.dest,
                       "trigger": event_data.event.name}
+        current_state = self.dest if hasattr(event_data.model.state, 'name') else event_data.model.state
         event_data.machine.websocket_handler.send_message({"method": "state_changed",
                                                            "arg": {"model": model_name, "transition": transition,
-                                                                   "state": event_data.model.state}})
+                                                                   "state": current_state}})
 
 
 class WebMachine(MarkupMachine):
