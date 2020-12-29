@@ -1,18 +1,28 @@
-body { 
-    font: 14px helvetica neue, helvetica, arial, sans-serif;
-  }
-  
+body {
+  font: 14px helvetica neue, helvetica, arial, sans-serif;
+}
+
 #cy {
-    height: 100%;
-    width: 100%;
-    position: absolute;
-    left: 0;
-    top: 2rem;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 2rem;
+}
+
+#legend {
+  height: 30%;
+  width: 20%;
+  position: absolute;
+  left: 80%;
+  top: 2rem;
+  border: 1px solid black;
+  border-radius: 15px;
 }
 
 #machineName {
-    width: 100%;
-    text-align: center;
+  width: 100%;
+  text-align: center;
 }
 
 #config {

@@ -9,17 +9,23 @@ _LOGGER.addHandler(logging.NullHandler())
 
 
 class WebTransition(Transition):
-
     def _change_state(self, event_data):
         super(WebTransition, self)._change_state(event_data)
-        model_name = event_data.model.name if hasattr(event_data.model, 'name') else str(id(event_data.model))
-        transition = {"source": self.source,
-                      "dest": self.dest,
-                      "trigger": event_data.event.name}
-        current_state = self.dest if hasattr(event_data.model.state, 'name') else event_data.model.state
-        event_data.machine.websocket_handler.send_message({"method": "state_changed",
-                                                           "arg": {"model": model_name, "transition": transition,
-                                                                   "state": current_state}})
+        model_name = (
+            event_data.model.name
+            if hasattr(event_data.model, "name")
+            else str(id(event_data.model))
+        )
+        transition = {"source": self.source, "dest": self.dest, "trigger": event_data.event.name}
+        current_state = (
+            self.dest if hasattr(event_data.model.state, "name") else event_data.model.state
+        )
+        event_data.machine.websocket_handler.send_message(
+            {
+                "method": "state_changed",
+                "arg": {"model": model_name, "transition": transition, "state": current_state},
+            }
+        )
 
 
 class WebMachine(MarkupMachine):
@@ -27,22 +33,26 @@ class WebMachine(MarkupMachine):
     transition_cls = WebTransition
 
     def __init__(self, *args, **kwargs):
-        self.websocket_handler = kwargs.pop('websocket_handler',
-                                            _init_default_handler(self, kwargs.pop('port', 8080),
-                                                                  kwargs.pop('daemon', False)))
+        self.websocket_handler = kwargs.pop(
+            "websocket_handler",
+            _init_default_handler(self, kwargs.pop("port", 8080), kwargs.pop("daemon", False)),
+        )
+        self.graph_css = kwargs.pop("graph_css", [])
         super(WebMachine, self).__init__(*args, **kwargs)
 
     def process_message(self, message):
-        if message['method'] == 'trigger':
+        if message["method"] == "trigger":
             for model in self.models:
-                model.trigger(message['arg'])
+                model.trigger(message["arg"])
 
     def start_server(self):
         import tornado.ioloop
+
         try:
             self._iloop = tornado.ioloop.IOLoop.current()
         except RuntimeError:
             import asyncio
+
             asyncio.set_event_loop(asyncio.new_event_loop())
             self._iloop = tornado.ioloop.IOLoop.current()
         except ImportError:
@@ -66,22 +76,26 @@ def _init_default_handler(machine, port=8080, daemon=False):
     import tornado.web
     from .handlers import MainHandler, WebSocketHandler
     from .settings import settings
-    handlers = [("/", MainHandler, {'machine': machine}),
-                ("/ws", WebSocketHandler, {'machine': machine})]
+
+    handlers = [
+        ("/", MainHandler, {"machine": machine}),
+        ("/ws", WebSocketHandler, {"machine": machine}),
+    ]
     # try to access current IOLoop. If this throws an error initialize a new even loop.
     # This is necessary when WebMachine/Tornado is not initialized in the main thread
     try:
         tornado.ioloop.IOLoop.current()
     except RuntimeError:
         import asyncio
+
         asyncio.set_event_loop(asyncio.new_event_loop())
-    _LOGGER.info('Initializing tornado web application')
+    _LOGGER.info("Initializing tornado web application")
     machine._application = tornado.web.Application(handlers, **settings)
     machine._port = port
     server_thread = threading.Thread(target=machine.start_server)
     server_thread.daemon = daemon
     machine._thread = server_thread
-    _LOGGER.info('Starting server thread with daemon=%r listening on port %d', daemon, port)
+    _LOGGER.info("Starting server thread with daemon=%r listening on port %d", daemon, port)
     server_thread.start()
     return WebSocketHandler
 

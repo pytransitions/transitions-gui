@@ -1,13 +1,13 @@
 {
   "name": "transitions-gui",
-  "version": "0.1.0",
-  "description": "",
+  "version": "0.2.0",
+  "description": "Frontend of transitions-gui",
   "private": true,
   "scripts": {
     "dev": "webpack --mode='development'",
     "prod": "webpack --mode='production'",
     "watch": "webpack --watch --mode='development'",
-    "serve": "npm run dev && python3 ../examples/simple.py"
+    "serve": "webpack --mode='development' && python ../examples/simple.py"
   },
   "keywords": [],
   "author": "",

@@ -1,9 +1,13 @@
 import convert from './convert'
-import initGraph from './graph'
+import {initGraph, initLegend} from './graph'
 import config from './config'
 
 export default class WebMachine {
-  constructor (transitionsMarkup, layout, details) {
+  constructor (transitionsMarkup, layout, details, style) {
+    this.modelClasses = {}
+    this.modelStates = {}
+    this.modelTransitions = {}
+    this.style = style
     let machine = convert(transitionsMarkup, details || false)
     this.machineName = machine.name
     layout = config.layouts[layout]
@@ -11,7 +15,20 @@ export default class WebMachine {
       layout = this.loadLayout(machine.name) || (isCompound(machine.nodes)
         ? config.layouts.dagre : config.layouts.concentric)
     }
-    this.cy = initGraph(machine.nodes, machine.edges, layout)
+    this.cy = initGraph(machine.nodes, machine.edges, layout, this.style)
+  }
+
+  updateLegend() {
+    let nodes = []
+    for (const [key, value] of Object.entries(this.modelClasses)) {
+      nodes.push({data: {label: `${key} <${value}>`}, classes: [value, key]})
+    }
+    if (nodes.length > 1) {
+      document.getElementById('legend').style.display = null
+      initLegend(nodes, this.style)
+    } else {
+      document.getElementById('legend').style.display = 'none'
+    }
   }
 
   loadLayout () {
@@ -51,14 +68,29 @@ export default class WebMachine {
     localStorage.setItem(config.machineStorageLocation, JSON.stringify(machineStorage))
   }
 
-  selectState (state) {
+  selectState (modelName, state) {
+    let escapedName = modelName.replace(/\W/g, '')
+    // console.log(this.modelStates)
+    this.modelStates[modelName].forEach(node => {
+      node.removeClass('currentState')
+      node.removeClass(escapedName)
+      node.removeClass(this.modelClasses[modelName])
+      // console.log(node)
+    })
     const states = (Array.isArray(state)) ? state : [state]
-    states.forEach(stateName => {
-      this.cy.getElementById(stateName).addClass('current')
+    this.modelStates[modelName] = states.map(stateName => { return this.cy.getElementById(stateName) })
+    // console.log(this.modelStates[modelName])
+    this.modelStates[modelName].forEach(node => {
+      node.addClass('currentState')
+      node.addClass(escapedName)
+      node.addClass(this.modelClasses[modelName])
     })
   }
 
-  selectTransition (transition) {
+  selectTransition (modelName, transition) {
+    this.modelTransitions[modelName].forEach(edge => {
+      edge.removeClass('currentTransition')
+    })
     // console.log(transition)
     const source = this.cy.nodes(`[id="${transition.source}"]`)
     let edge = source.connectedEdges(`[trigger="${transition.trigger}"]`)
@@ -68,7 +100,8 @@ export default class WebMachine {
     // console.log(edge.length)
     if (edge.length > 0) {
       edge = edge[0]
-      edge.addClass('current')
+      edge.addClass('currentTransition')
+      this.modelTransitions[modelName] = [edge] 
     }
   }
 }

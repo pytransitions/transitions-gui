@@ -7,7 +7,6 @@ _LOGGER.addHandler(logging.NullHandler())
 
 
 class MainHandler(tornado.web.RequestHandler):
-
     def initialize(self, machine):
         self.machine = machine
 
@@ -30,7 +29,14 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
     def open(self):
         _LOGGER.info("WebSocket opened")
         self.sockets.add(self)
-        self.write_message({"method": "update_machine", "arg": self.machine.markup}, binary=False)
+        self.write_message(
+            {
+                "method": "update_machine",
+                "arg": self.machine.markup,
+                "style": self.machine.graph_css,
+            },
+            binary=False,
+        )
 
     def on_message(self, message):
         message = json.loads(message)

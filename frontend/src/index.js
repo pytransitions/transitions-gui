@@ -16,7 +16,8 @@ class App {
       const _this = this
       switch (msg.method) {
         case 'update_machine':
-          this.webMachine = new WebMachine(msg.arg, getURLParameter('layout'), getURLParameter('details'))
+          this.webMachine = new WebMachine(msg.arg, getURLParameter('layout'), getURLParameter('details'), msg.style)
+          // console.log("Style " + msg.style)
           this.webMachine.cy.on('tap', 'edge', function (evt) {
             if (_this.webMachine.cy.autolock()) {
               _this.ws.send(JSON.stringify({
@@ -25,13 +26,20 @@ class App {
               }))
             }
           })
-          this.webMachine.selectState(msg.arg.models[0].state)
+          msg.arg.models.forEach(model => {
+            this.webMachine.modelClasses[model.name] = model['class-name'].replace(/\W/g, '')
+            this.webMachine.modelStates[model.name] = []
+            this.webMachine.modelTransitions[model.name] = []
+            this.webMachine.selectState(model.name, model.state)
+          });
+          this.webMachine.updateLegend()
+          // console.log(this.webMachine.modelClasses)
           break
         case 'state_changed':
           if (this.webMachine !== undefined) {
-            this.webMachine.cy.$('.current').removeClass('current')
-            this.webMachine.selectTransition(msg.arg.transition)
-            this.webMachine.selectState(msg.arg.state)
+            // console.log(msg)
+            this.webMachine.selectTransition(msg.arg.model, msg.arg.transition)
+            this.webMachine.selectState(msg.arg.model, msg.arg.state)
           }
           break
       }
