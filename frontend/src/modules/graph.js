@@ -12,6 +12,7 @@ let defaultStyleLegend = [
       'label': 'data(label)',
       'text-valign': 'center',
       'text-halign': 'right',
+      'text-wrap': 'wrap',
       'border-width': '1',
       'border-color': 'black',
       'background-color': '#fff',
@@ -179,7 +180,7 @@ export function initLegend(nodes, style) {
     }
   })
   cyLeg.autolock(true)
-  // cyLeg.panningEnabled(false)
+  return cyLeg
 }
 
 function renderParallel (ele) {

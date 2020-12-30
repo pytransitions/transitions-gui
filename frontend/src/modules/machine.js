@@ -16,16 +16,29 @@ export default class WebMachine {
         ? config.layouts.dagre : config.layouts.concentric)
     }
     this.cy = initGraph(machine.nodes, machine.edges, layout, this.style)
+    let legendEntries = []
+    transitionsMarkup.models.forEach(model => {
+      this.modelClasses[model.name] = model['class-name'].replace(/\W/g, '')
+      this.modelStates[model.name] = []
+      this.modelTransitions[model.name] = []
+      this.selectState(model.name, model.state)
+      legendEntries.push({name: model.name, class: model['class-name'].replace(/\W/g, ''), state: model.state})
+    });
+    this.updateLegend(legendEntries)
   }
 
-  updateLegend() {
+  updateLegend(entries) {
     let nodes = []
-    for (const [key, value] of Object.entries(this.modelClasses)) {
-      nodes.push({data: {label: `${key} <${value}>`}, classes: [value, key]})
-    }
+    entries.forEach(entry => {
+      const states = (Array.isArray(entry.state)) ? entry.state : [entry.state]
+      nodes.push({data: {
+        id: entry.name,
+        label: `${entry.name} <${entry.class}>\nState: ${states.join(', ')}`},
+        classes: [entry.class, entry.name]})
+    })
     if (nodes.length > 1) {
       document.getElementById('legend').style.display = null
-      initLegend(nodes, this.style)
+      this.cyLegend = initLegend(nodes, this.style)
     } else {
       document.getElementById('legend').style.display = 'none'
     }
@@ -85,9 +98,15 @@ export default class WebMachine {
       node.addClass(escapedName)
       node.addClass(this.modelClasses[modelName])
     })
+    if (this.cyLegend) {
+      this.cyLegend.nodes(`#${modelName}`).css({content: `${modelName} <${this.modelClasses[modelName]}>\nState: ${states.join(', ')}`})
+    }
   }
 
   selectTransition (modelName, transition) {
+    // console.log(this.modelTransitions)
+    // console.log(modelName)
+    // console.log(this.modelTransitions[modelName])
     this.modelTransitions[modelName].forEach(edge => {
       edge.removeClass('currentTransition')
     })

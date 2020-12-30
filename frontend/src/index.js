@@ -26,13 +26,6 @@ class App {
               }))
             }
           })
-          msg.arg.models.forEach(model => {
-            this.webMachine.modelClasses[model.name] = model['class-name'].replace(/\W/g, '')
-            this.webMachine.modelStates[model.name] = []
-            this.webMachine.modelTransitions[model.name] = []
-            this.webMachine.selectState(model.name, model.state)
-          });
-          this.webMachine.updateLegend()
           // console.log(this.webMachine.modelClasses)
           break
         case 'state_changed':
