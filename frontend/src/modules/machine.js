@@ -115,6 +115,9 @@ export default class WebMachine {
     let edge = source.connectedEdges(`[trigger="${transition.trigger}"]`)
     if (edge.length > 1) {
       edge = edge.filter(`[source="${transition.source}"]`)
+      if (edge.length > 1) {
+        edge = edge.filter(`[target="${transition.dest}"]`)
+      }
     }
     // console.log(edge.length)
     if (edge.length > 0) {

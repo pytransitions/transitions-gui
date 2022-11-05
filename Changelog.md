@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0 ()
+
+  * Bugfix #24: Edges with same source not correctly disambiguated for highlighting (thanks @Bilby42)
+
 ## 0.1.0 (June 2020)
 
 Release 0.1.0 has been developed to be compatible with `transitions` 0.8.2.
