@@ -22,8 +22,8 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
             self,
             *args, **kwargs
     ):
-        super().__init__(WebSocketHandler, self).__init__(*args, **kwargs)
         self.machine = None
+        super(WebSocketHandler, self).__init__(*args, **kwargs)
 
     @classmethod
     def send_message(cls, message):
