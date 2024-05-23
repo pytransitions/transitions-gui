@@ -15,7 +15,7 @@ class TestWebMachine(TestCase):
         time.sleep(0.1)
 
     def test_server(self):
-        self.machine = WebMachine(**_SIMPLE_ARGS)
+        self.machine = WebMachine(**_SIMPLE_ARGS)  # type: ignore
         time.sleep(0.5)
 
     def test_threaded_server(self):
@@ -23,7 +23,7 @@ class TestWebMachine(TestCase):
         class MachineFactory(threading.Thread):
 
             def run(self):
-                self.machine = WebMachine(**_SIMPLE_ARGS)
+                self.machine = WebMachine(**_SIMPLE_ARGS)  # type: ignore
 
         mf = MachineFactory()
         mf.start()
@@ -31,8 +31,8 @@ class TestWebMachine(TestCase):
         self.machine = mf.machine
 
     def test_trigger_event(self):
-        self.machine = WebMachine(**_SIMPLE_ARGS)
+        self.machine = WebMachine(**_SIMPLE_ARGS)  # type: ignore
         time.sleep(0.5)
         self.assertEqual('A', self.machine.state)
-        self.machine.process_message(dict(method='trigger', arg='next_state'))
+        self.machine.process_message({"method": "trigger", "arg": "next_state"})
         self.assertEqual('B', self.machine.state)
