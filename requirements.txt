@@ -1,2 +1,2 @@
 tornado>=5.0
-transitions>=0.7.0
+transitions>=0.9.1
