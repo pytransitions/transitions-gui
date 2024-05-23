@@ -88,7 +88,9 @@ let defaultStyle = [
       'text-background-opacity': 1,
       'text-background-color': '#fff',
       'text-background-padding': 5,
-      'text-rotation': 'autorotate'
+      'text-rotation': 'autorotate',
+      'source-text-rotation': 'autorotate',
+      'target-text-rotation': 'autorotate',
     }
   },
   {
