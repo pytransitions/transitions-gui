@@ -3,7 +3,9 @@ include *.txt
 include .coveragerc
 include LICENSE
 include MANIFEST
-include tox.ini
+include noxfile.py
+include pytest.ini
+include mypy.ini
 
 include frontend/.eslintrc.yml
 include frontend/package.json
