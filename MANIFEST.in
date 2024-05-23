@@ -13,11 +13,13 @@ include frontend/README.md
 
 include transitions_gui/static/js/main.js
 include transitions_gui/static/js/main.js.map
+include transitions_gui/static/thirdpartynotice.txt
 
 recursive-include doc/img *.png
 recursive-include examples *.py
 recursive-include frontend/src *.js
 recursive-include tests *.py
+recursive-include transitions_gui *.pyi
 recursive-include transitions_gui/static/css *.css
 recursive-include transitions_gui/static/img *.svg
 recursive-include transitions_gui/templates *.html
