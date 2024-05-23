@@ -18,6 +18,13 @@ class MainHandler(tornado.web.RequestHandler):
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
     sockets = set()
 
+    def __init__(
+            self,
+            *args, **kwargs
+    ):
+        super().__init__(WebSocketHandler, self).__init__(*args, **kwargs)
+        self.machine = None
+
     @classmethod
     def send_message(cls, message):
         for s in cls.sockets:
