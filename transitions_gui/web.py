@@ -1,8 +1,11 @@
 import logging
+import time
+
+import tornado
 
 from transitions.extensions.markup import MarkupMachine
 from transitions.extensions.nesting import HierarchicalMachine, NestedTransition
-from transitions.core import Transition
+from transitions.core import Transition, Machine
 
 _LOGGER = logging.getLogger(__name__)
 _LOGGER.addHandler(logging.NullHandler())
@@ -32,13 +35,29 @@ class WebMachine(MarkupMachine):
 
     transition_cls = WebTransition
 
-    def __init__(self, *args, **kwargs):
-        self.websocket_handler = kwargs.pop(
-            "websocket_handler",
-            _init_default_handler(self, kwargs.pop("port", 8080), kwargs.pop("daemon", False)),
-        )
-        self.graph_css = kwargs.pop("graph_css", [])
-        super(WebMachine, self).__init__(*args, **kwargs)
+    def __init__(self, model=Machine.self_literal, states=None, initial='initial', transitions=None,
+                 send_event=False, auto_transitions=True,
+                 ordered_transitions=False, ignore_invalid_triggers=None,
+                 before_state_change=None, after_state_change=None, name=None,
+                 queued=False, prepare_event=None, finalize_event=None, model_attribute='state', on_exception=None,
+                 on_final=None, markup=None, auto_transitions_markup=False, graph_css=None,
+                 websocket_handler=None, port=8080, daemon=False, **kwargs):
+
+        super(WebMachine, self).__init__(model=model, states=states, initial=initial, transitions=transitions,
+                                         send_event=send_event, auto_transitions=auto_transitions,
+                                         ordered_transitions=ordered_transitions,
+                                         ignore_invalid_triggers=ignore_invalid_triggers,
+                                         before_state_change=before_state_change, after_state_change=after_state_change,
+                                         name=name, queued=queued, prepare_event=prepare_event,
+                                         finalize_event=finalize_event, model_attribute=model_attribute,
+                                         on_exception=on_exception, on_final=on_final, markup=markup,
+                                         auto_transitions_markup=auto_transitions_markup, **kwargs)
+
+        self._iloop = None
+        self._http_server = None
+        self._thread = None
+        self.websocket_handler = websocket_handler or _init_default_handler(self, port, daemon)
+        self.graph_css = graph_css or []
 
     def process_message(self, message):
         if message["method"] == "trigger":
@@ -46,22 +65,15 @@ class WebMachine(MarkupMachine):
                 model.trigger(message["arg"])
 
     def start_server(self):
-        import tornado.ioloop
-
-        try:
-            self._iloop = tornado.ioloop.IOLoop.current()
-        except RuntimeError:
-            import asyncio
-
-            asyncio.set_event_loop(asyncio.new_event_loop())
-            self._iloop = tornado.ioloop.IOLoop.current()
-        except ImportError:
-            _LOGGER.warn("Could not initialize event loop correctly.")
+        self._iloop = tornado.ioloop.IOLoop.current()
         self._http_server = self._application.listen(self._port)
-        self._iloop.start()
-        _LOGGER.info("Loop stopped")
-        self._iloop.close()
-        _LOGGER.info("Loop closed")
+        if self._iloop is not None:
+            self._iloop.start()
+            _LOGGER.info("Loop stopped")
+            self._iloop.close()
+            _LOGGER.info("Loop closed")
+        else:
+            raise RuntimeError("Could not initialize IOLoop for tornado.")
 
     def stop_server(self):
         if self._thread:
@@ -81,14 +93,15 @@ def _init_default_handler(machine, port=8080, daemon=False):
         ("/", MainHandler, {"machine": machine}),
         ("/ws", WebSocketHandler, {"machine": machine}),
     ]
-    # try to access current IOLoop. If this throws an error initialize a new even loop.
+    # try to access current IOLoop. If this throws an error initialize a new event loop.
     # This is necessary when WebMachine/Tornado is not initialized in the main thread
     try:
         tornado.ioloop.IOLoop.current()
-    except RuntimeError:
+    except (RuntimeError, DeprecationWarning):
         import asyncio
-
         asyncio.set_event_loop(asyncio.new_event_loop())
+        time.sleep(0.1)
+
     _LOGGER.info("Initializing tornado web application")
     machine._application = tornado.web.Application(handlers, **settings)
     machine._port = port
