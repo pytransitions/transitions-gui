@@ -15,12 +15,14 @@ def test_check_manifest(session):
 def test_mypy(session):
     session.install(".")
     session.install("mypy")
+    session.install("-rrequirements.txt")
     session.install("-rrequirements_test.txt")
-    session.run("pytest", "-nauto", "--doctest-modules", "tests/")
+    session.run("pytest", "--doctest-modules", "tests/")
 
 
-@nox.session(python=python)
+@nox.session(python=python[:-1])
 def test(session):
     session.install(".")
+    session.install("-rrequirements.txt")
     session.install("-rrequirements_test.txt")
-    session.run("pytest", "-nauto", "tests/")
+    session.run("pytest", "tests/")
