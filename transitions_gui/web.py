@@ -69,6 +69,7 @@ class WebMachine(MarkupMachine):
         self._iloop = tornado.ioloop.IOLoop.current()
         self._http_server = self._application.listen(self.port)
         if self._iloop is not None:
+            _LOGGER.info(f"Server loop running at http://localhost:{self.port}")
             self._iloop.start()
             _LOGGER.info("Loop stopped")
             self._iloop.close()
