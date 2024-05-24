@@ -27,7 +27,8 @@ class WebTransition(Transition):
             {
                 "method": "state_changed",
                 "arg": {"model": model_name, "transition": transition, "state": current_state},
-            }
+            },
+            port=event_data.machine.port
         )
 
 
@@ -66,7 +67,7 @@ class WebMachine(MarkupMachine):
 
     def start_server(self):
         self._iloop = tornado.ioloop.IOLoop.current()
-        self._http_server = self._application.listen(self._port)
+        self._http_server = self._application.listen(self.port)
         if self._iloop is not None:
             self._iloop.start()
             _LOGGER.info("Loop stopped")
@@ -104,7 +105,7 @@ def _init_default_handler(machine, port=8080, daemon=False):
 
     _LOGGER.info("Initializing tornado web application")
     machine._application = tornado.web.Application(handlers, **settings)
-    machine._port = port
+    machine.port = port
     server_thread = threading.Thread(target=machine.start_server)
     server_thread.daemon = daemon
     machine._thread = server_thread
@@ -113,8 +114,27 @@ def _init_default_handler(machine, port=8080, daemon=False):
     return WebSocketHandler
 
 
-class NestedWebTransition(WebTransition, NestedTransition):
-    pass
+class NestedWebTransition(NestedTransition):
+    def _change_state(self, event_data):
+        super(NestedWebTransition, self)._change_state(event_data)
+        model_name = (
+            event_data.model.name
+            if hasattr(event_data.model, "name")
+            else str(id(event_data.model))
+        )
+        src = event_data.machine.get_global_name(self.source)
+        dest = event_data.machine.get_global_name(self.dest)
+        transition = {"source": src, "dest": dest, "trigger": event_data.event.name}
+        current_state = (
+            self.dest if hasattr(event_data.model.state, "name") else event_data.model.state
+        )
+        event_data.machine.websocket_handler.send_message(
+            {
+                "method": "state_changed",
+                "arg": {"model": model_name, "transition": transition, "state": current_state},
+            },
+            port=event_data.machine.port
+        )
 
 
 class NestedWebMachine(WebMachine, HierarchicalMachine):

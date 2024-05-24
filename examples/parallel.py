@@ -27,7 +27,8 @@ states = [{'name': 'style',
                }]
            }, 'preparing']
 
-transitions = [['go', 'preparing', 'style']]
+transitions = [['inc', 'preparing', 'style'],
+               ['inc', 'style', 'preparing']]
 
 machine = NestedWebMachine(states=states, transitions=transitions, initial='preparing',
                            name="Label Machine",
@@ -37,5 +38,6 @@ machine = NestedWebMachine(states=states, transitions=transitions, initial='prep
 try:
     while True:
         time.sleep(5)
+        machine.inc()
 except KeyboardInterrupt:  # Ctrl + C will shutdown the machine
     machine.stop_server()
