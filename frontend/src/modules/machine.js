@@ -18,13 +18,15 @@ export default class WebMachine {
     this.cy = initGraph(machine.nodes, machine.edges, layout, this.style)
     let legendEntries = []
     transitionsMarkup.models.forEach(model => {
+      legendEntries.push({name: model.name, class: model['class-name'].replace(/\W/g, ''), state: model.state})
+    });
+    this.updateLegend(legendEntries)
+    transitionsMarkup.models.forEach(model => {
       this.modelClasses[model.name] = model['class-name'].replace(/\W/g, '')
       this.modelStates[model.name] = []
       this.modelTransitions[model.name] = []
       this.selectState(model.name, model.state)
-      legendEntries.push({name: model.name, class: model['class-name'].replace(/\W/g, ''), state: model.state})
     });
-    this.updateLegend(legendEntries)
   }
 
   updateLegend(entries) {
@@ -41,6 +43,7 @@ export default class WebMachine {
       this.cyLegend = initLegend(nodes, this.style)
     } else {
       document.getElementById('legend').style.display = 'none'
+      this.cyLegend = undefined
     }
   }
 
@@ -83,20 +86,30 @@ export default class WebMachine {
 
   selectState (modelName, state) {
     let escapedName = modelName.replace(/\W/g, '')
-    // console.log(this.modelStates)
+    const hasLegend = this.cyLegend !== undefined
     this.modelStates[modelName].forEach(node => {
-      node.removeClass('currentState')
+      if (!hasLegend) {
+        node.removeClass('currentState')
+      }
       node.removeClass(escapedName)
       node.removeClass(this.modelClasses[modelName])
+      if (hasLegend) {
+        node.data('label', node.data('label').replace(`\n${modelName}`, ''))
+      }
       // console.log(node)
     })
     const states = (Array.isArray(state)) ? state : [state]
     this.modelStates[modelName] = states.map(stateName => { return this.cy.getElementById(stateName) })
     // console.log(this.modelStates[modelName])
     this.modelStates[modelName].forEach(node => {
-      node.addClass('currentState')
+      if (!hasLegend) {
+        node.addClass('currentState')
+      }
       node.addClass(escapedName)
       node.addClass(this.modelClasses[modelName])
+      if (hasLegend) {
+        node.data('label', node.data('label') + `\n${modelName}`)
+      }
     })
     if (this.cyLegend) {
       this.cyLegend.nodes(`#${modelName}`).css({content: `${modelName} <${this.modelClasses[modelName]}>\nState: ${states.join(', ')}`})
@@ -107,9 +120,12 @@ export default class WebMachine {
     // console.log(this.modelTransitions)
     // console.log(modelName)
     // console.log(this.modelTransitions[modelName])
-    this.modelTransitions[modelName].forEach(edge => {
-      edge.removeClass('currentTransition')
-    })
+    if (this.modelTransitions[modelName]) {
+      this.modelTransitions[modelName].forEach(edge => {
+        edge.removeClass('currentTransition')
+      })
+    }
+
     // console.log(transition)
     const source = this.cy.nodes(`[id="${transition.source}"]`)
     let edge = source.connectedEdges(`[trigger="${transition.trigger}"]`)
