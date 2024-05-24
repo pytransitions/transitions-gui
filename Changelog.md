@@ -4,10 +4,11 @@
 
 Release 0.9.0 has been developed to be compatible with `transitions` 0.9.1.
 
-  * Update all npm packages to their recent version
-  * Align minor version to transitions
-  * Add stub files and `py.typed`
-  * Extend documentation with styling example
+  * Updated all npm packages to their recent version
+  * Aligned minor version to transitions
+  * Added stub files and `py.typed`
+  * Extended documentation with styling example
+  * Added a legend and model names to graphs with multiple models
   * Bugfix: Add default machine name to graph when none was passed by markup
   * Bugfix #24: Edges with same source not correctly disambiguated for highlighting (thanks @Bilby42)
 
