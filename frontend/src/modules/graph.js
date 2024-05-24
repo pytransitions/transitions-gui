@@ -59,7 +59,9 @@ let defaultStyle = [
     selector: 'node[parallel]',
     style: {
       'background-opacity': 0,
-      'background-image': renderParallel
+      'background-image': function(ele) {
+        return renderParallel(ele).svg
+      }
     }
   },
   {
@@ -186,22 +188,22 @@ export function initLegend(nodes, style) {
   return cyLeg
 }
 
+const emptySvg = 'data:image/svg+xml,' + encodeURIComponent(`
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg>
+    <svg xmlns="http://www.w3.org/2000/svg">
+</svg>`)
+
 function renderParallel (ele) {
-  if (!ele) {
-    return ele
+  if (!ele || !ele._private.autoWidth) {
+    return {svg: emptySvg}
   }
-
   const width = ele._private.autoWidth
-  if (width === undefined) {
-    return ele
-  }
-
   const height = ele._private.autoHeight + 20
   const pos = ele._private.position
   const left = pos.x - width / 2
   const top = pos.y - height / 2
+  let lines = ""
   if (ele._private.children.length > 1) {
-    let lines = ''
     if (height > width) {
       const cPosX = ele._private.children.map(c => c._private.position.x).sort(function (a, b) { return a - b })
       for (let i = 1; i < cPosX.length; ++i) {
@@ -215,14 +217,11 @@ function renderParallel (ele) {
         lines += `<line x1="0" y1="${y}" x2="${width}" y2="${y}" stroke="black" stroke-dasharray="4, 4" />\n`
       }
     }
-    var svg = `<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg>
-        <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" stroke-width="2">
-        ${lines}
-        </svg>`
-    // console.log(svg)
-    var payload = 'data:image/svg+xml,' + encodeURIComponent(svg)
-    // console.log(payload)
-    return payload
   }
-  return ele
+  const svg = `<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}">
+    ${lines}
+    </svg>`
+    // console.log(svg)
+  return {svg: 'data:image/svg+xml,' + encodeURIComponent(svg), width: width, height: height}
 }
