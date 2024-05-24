@@ -9,7 +9,7 @@ class MainHandler(tornado.web.RequestHandler):
     def get(self) -> None: ...
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
-    sockets: ClassVar[Dict[int, "WebSocketHandler"]]
+    sockets: ClassVar[Dict[int, Set["WebSocketHandler"]]]
     machine: Optional[WebMachine]
 
     def send_message(self, message: Dict[str, Any], port: int) -> None: ...
