@@ -23,7 +23,7 @@ setup(
     package_data={'transitions_gui': ['templates/*', 'static/css/*', 'static/js/*', 'static/img/*']},
     install_requires=['tornado>=5.0', 'transitions>=0.9.0'],
     extras_require={},
-    tests_require=['nose'],
+    tests_require=['pytest', 'pycodestyle', 'websocket-client'],
     license='MIT',
     download_url='https://github.com/pytransitions/transitions-gui/archive/%s.tar.gz' % __version__,
     classifiers=[
