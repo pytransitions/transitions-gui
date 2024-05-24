@@ -4,6 +4,7 @@ from transitions_gui import WebMachine
 import time
 import threading
 from websocket import create_connection
+import urllib.request
 
 _SIMPLE_ARGS = dict(states=['A', 'B', 'C'], initial='A', name='Simple Machine',
                     ordered_transitions=True, ignore_invalid_triggers=True, auto_transitions=False)
@@ -65,4 +66,21 @@ class TestWebMachine(TestCase):
         assert config["transition"]["source"] == _SIMPLE_ARGS["initial"]
         assert config["transition"]["trigger"] == "next_state"
         assert config["state"] != _SIMPLE_ARGS["initial"]
+        ws.close()
+
+    def test_http(self):
+        self.machine = WebMachine(**_SIMPLE_ARGS)  # type: ignore
+        time.sleep(_INIT_DELAY)
+        fp = urllib.request.urlopen(f"http://localhost:{self.machine.port}")
+        answer = fp.read().decode("utf8")
+        assert f"<title>{_SIMPLE_ARGS['name']}</title>" in answer
+
+    def test_receive_message(self):
+        self.machine = WebMachine(**_SIMPLE_ARGS)  # type: ignore
+        time.sleep(_INIT_DELAY)
+        ws = create_connection(f"ws://localhost:{self.machine.port}/ws")
+        _ = ws.recv()
+        ws.send(json.dumps({"method": "trigger", "arg": "next_state"}))
+        time.sleep(_INIT_DELAY)
+        assert self.machine.state != _SIMPLE_ARGS["initial"]
         ws.close()
