@@ -15,3 +15,4 @@ MANIFEST
 *.bak
 pylint.log
 frontend/node_modules
+sandbox.py
