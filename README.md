@@ -1,8 +1,11 @@
 
 # transitions-gui - A frontend for [transitions](https://github.com/pytransitions/transitions) state machines 
-[![Version](https://img.shields.io/badge/version-v0.1.0-orange.svg)](https://github.com/pytransitions/transitions-gui)
-[![Build Status](https://travis-ci.org/pytransitions/transitions-gui.svg?branch=master)](https://travis-ci.org/pytransitions/transitions-gui)
+[![Version](https://img.shields.io/badge/version-v0.9.0-orange.svg)](https://github.com/pytransitions/transitions)
+[![Build Status](https://github.com/pytransitions/transitions-gui/actions/workflows/pytest.yml/badge.svg)](https://github.com/pytransitions/transitions-gui/actions?query=workflow%3Apytest)
+[![Coverage Status](https://coveralls.io/repos/github/pytransitions/transitions-gui/badge.svg?branch=master)](https://coveralls.io/github/pytransitions/transitions-gui?branch=master)
 [![PyPi](https://img.shields.io/pypi/v/transitions-gui.svg)](https://pypi.org/project/transitions-gui)
+[![Copr](https://img.shields.io/badge/dynamic/json?color=blue&label=copr&query=builds.latest.source_package.version&url=https%3A%2F%2Fcopr.fedorainfracloud.org%2Fapi_3%2Fpackage%3Fownername%3Daleneum%26projectname%3Dpython-transitions%26packagename%3Dpython-transitions-gui%26with_latest_build%3DTrue)](https://copr.fedorainfracloud.org/coprs/aleneum/python-transitions/)
+[![GitHub commits](https://img.shields.io/github/commits-since/pytransitions/transitions-gui/0.1.0.svg)](https://github.com/pytransitions/transitions-gui/compare/0.1.0...master)
 [![License](https://img.shields.io/github/license/pytransitions/transitions-gui.svg)](LICENSE)
 
 An extension for the [transitions](https://github.com/pytransitions/transitions) state machine package.
