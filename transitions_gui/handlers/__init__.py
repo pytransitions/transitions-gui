@@ -16,7 +16,7 @@ class MainHandler(tornado.web.RequestHandler):
 
 
 class WebSocketHandler(tornado.websocket.WebSocketHandler):
-    sockets = set()
+    sockets = {}
 
     def __init__(
             self,
@@ -26,16 +26,18 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         super(WebSocketHandler, self).__init__(*args, **kwargs)
 
     @classmethod
-    def send_message(cls, message):
-        for s in cls.sockets:
-            s.write_message(message, binary=False)
+    def send_message(cls, message, port):
+        if port in cls.sockets:
+            cls.sockets[port].write_message(message, binary=False)
 
     def initialize(self, machine):
         self.machine = machine
 
     def open(self):
         _LOGGER.info("WebSocket opened")
-        self.sockets.add(self)
+        if self.machine.port in self.sockets:
+            self.sockets[self.machine.port].close()
+        self.sockets[self.machine.port] = self
         self.write_message(
             {
                 "method": "update_machine",
@@ -50,5 +52,5 @@ class WebSocketHandler(tornado.websocket.WebSocketHandler):
         self.machine.process_message(message)
 
     def on_close(self):
-        self.sockets.remove(self)
+        del self.sockets[self.machine.port]
         _LOGGER.info("WebSocket closed")
