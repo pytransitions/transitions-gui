@@ -1,6 +1,6 @@
 import json
 from unittest import TestCase
-from transitions_gui import WebMachine
+from transitions_gui import WebMachine, NestedWebMachine
 import time
 import threading
 from websocket import create_connection
@@ -14,10 +14,14 @@ _INIT_DELAY = 0.1
 
 class TestWebMachine(TestCase):
 
+    def setUp(self):
+        self.machine = None
+
     def tearDown(self):
-        assert self.machine._thread is not None
-        self.machine.stop_server()
-        time.sleep(_INIT_DELAY)
+        if self.machine is not None:
+            assert self.machine._thread is not None
+            self.machine.stop_server()
+            time.sleep(_INIT_DELAY)
 
     def test_server(self):
         self.machine = WebMachine(**_SIMPLE_ARGS)  # type: ignore
@@ -59,7 +63,7 @@ class TestWebMachine(TestCase):
         time.sleep(_INIT_DELAY)
         ws = create_connection(f"ws://localhost:{self.machine.port}/ws")
         _ = ws.recv()
-        self.machine.next_state()
+        assert self.machine.next_state()
         answer = json.loads(ws.recv())
         assert answer["method"] == "state_changed"
         config = answer["arg"]
@@ -84,3 +88,9 @@ class TestWebMachine(TestCase):
         time.sleep(_INIT_DELAY)
         assert self.machine.state != _SIMPLE_ARGS["initial"]
         ws.close()
+
+    def test_hsm(self):
+        self.machine = NestedWebMachine(**_SIMPLE_ARGS)  # type: ignore
+        time.sleep(_INIT_DELAY)
+        assert self.machine.next_state()
+        assert self.machine.state != _SIMPLE_ARGS["initial"]
