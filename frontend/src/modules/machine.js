@@ -9,7 +9,7 @@ export default class WebMachine {
     this.modelTransitions = {}
     this.style = style
     let machine = convert(transitionsMarkup, details || false)
-    this.machineName = machine.name || ''
+    this.machineName = machine.name || 'State Machine'
     layout = config.layouts[layout]
     if (layout === undefined) {
       layout = this.loadLayout(machine.name) || (isCompound(machine.nodes)
