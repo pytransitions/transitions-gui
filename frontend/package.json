@@ -1,6 +1,6 @@
 {
   "name": "transitions-gui",
-  "version": "0.2.0",
+  "version": "0.9.0",
   "description": "Frontend of transitions-gui",
   "private": true,
   "scripts": {
