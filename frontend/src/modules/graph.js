@@ -32,6 +32,7 @@ let defaultStyle = [
       'label': 'data(label)',
       'text-valign': 'center',
       'text-halign': 'center',
+      'text-wrap': 'wrap',
       'border-width': '2',
       'border-color': 'black',
       'background-color': '#fff',
